@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: linear-gradient(135deg, #74ABE2, #5563DE);
+      color: #fff;
+      padding: 40px;
+    }
+    input {
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      width: 200px;
+    }
+    button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      background: #333;
+      color: white;
+      cursor: pointer;
+      margin-left: 5px;
+    }
+    #result {
+      margin-top: 30px;
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>🌤️ Simple Weather App</h1>
+  <input id="cityInput" type="text" placeholder="Enter city name">
+  <button id="getWeather">Get Weather</button>
+
+  <div id="result"></div>
+
+  <script>
+    const apiKey = "74a39b191f83b7ded5eee49711f0b34d";
+    const button = document.getElementById("getWeather");
+    const cityInput = document.getElementById("cityInput");
+    const result = document.getElementById("result");
+
+    button.addEventListener("click", () => {
+      const city = cityInput.value.trim();
+      if (city === "") {
+        result.textContent = "⚠️ Enter a city name first.";
+        return;
+      }
+
+      result.textContent = "Fetching weather data...";
+
+      fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.cod !== 200) {
+            result.textContent = "❌ City not found!";
+            return;
+          }
+
+          result.innerHTML = `
+            <h2>${data.name}, ${data.sys.country}</h2>
+            <p>🌡️ ${data.main.temp}°C</p>
+            <p>☁️ ${data.weather[0].description}</p>
+            <p>💨 Wind: ${data.wind.speed} m/s</p>
+          `;
+        })
+        .catch(() => {
+          result.textContent = "⚠️ Error fetching data. Try again.";
+        });
+    });
+  </script>
+</body>
+</html>
